@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="LOG_PATTERN_LEVEL">%-5level [ms-produits,%X{traceId},%X{spanId}]</Property>
+        <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+        <Property name="LOG_PATTERN">%clr{%d{${sys:LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${sys:LOG_PATTERN_LEVEL}} %clr{%pid}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console_JSON" target="SYSTEM_OUT">
+            <JsonLayout complete="false" compact="false">
+                <KeyValuePair key="service" value="ms-produits"/>
+            </JsonLayout>
+        </Console>
+        <File name="file" fileName="logs/ms-produits.log">
+            <JsonLayout complete="false" compact="false">
+                <KeyValuePair key="service" value="ms-produits"/>
+            </JsonLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console_JSON" />
+            <AppenderRef ref="file" />
+        </Root>
+        <Logger name="sy.msproduits.controller" level="debug" additivity="false">
+            <AppenderRef ref="Console_JSON" />
+        </Logger>
+        <Logger name="sy.msproduits.services" level="debug" additivity="false">
+            <AppenderRef ref="Console_JSON" />
+        </Logger>
+    </Loggers>
+</Configuration>

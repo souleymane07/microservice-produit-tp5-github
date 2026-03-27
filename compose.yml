@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Base de données pour les commandes
+  mysql-commandes-db:
+    image: mysql:8.0
+    container_name: mysql-commandes-db
+    labels:
+      - "microservice=commandes"
+      - "type=database"
+      - "group=MS-COMMANDES"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=mscommandes_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=user123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_commandes_data:/var/lib/mysql
+    restart: unless-stopped
+
+  # Redis pour le cache des commandes
+  redis-commandes:
+    image: redis:7-alpine
+    container_name: redis-commandes
+    labels:
+      - "microservice=commandes"
+      - "type=cache"
+      - "group=MS-COMMANDES"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_commandes_data:/data
+    restart: unless-stopped
+
+volumes:
+  mysql_commandes_data:
+  redis_commandes_data:

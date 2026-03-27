@@ -1,0 +1,46 @@
+stages:
+  - build-test
+  - docker-build
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+
+build-test-job:
+  stage: build-test
+  image: maven:3.8.3-openjdk-17
+  script:
+    - mvn clean package
+  artifacts:
+    paths:
+      - target/ms-produits-0.0.1-SNAPSHOT.jar
+
+docker-build-job:
+  stage: docker-build
+  image: docker:latest
+  services:
+    - docker:dind
+  needs:
+    - build-test-job
+  script:
+    - docker build -t $DOCKER_USER/ms-produits:latest .
+    - docker login -u $DOCKER_USER -p $DOCKER_HUB_TOKEN
+    - docker push $DOCKER_USER/ms-produits:latest
+  only:
+    - main
+  when: manual
+
+deploy-job:
+  stage: deploy
+  image: alpine:latest
+  needs:
+    - docker-build-job
+  script:
+    - echo "Déploiement manuel à implémenter"
+  only:
+    - main
+  when: manual
